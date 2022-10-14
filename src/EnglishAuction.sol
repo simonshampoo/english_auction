@@ -1,10 +1,15 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.9;
 
 import "solmate/tokens/ERC721.sol";
-import "openzeppelin-contracts/contracts/utils/Strings.sol";
+import "solmate/auth/Owned.sol";
 
-contract EnglishAuction {
+contract EnglishAuction is Owned {
+    event Started();
+    event BidSent(address indexed bidder, uint256 amount);
+    event WithdrawnBid(address indexed bidder, uint256 amount);
+    event Ended(address winner, uint256 amount);
+
     struct Bid {
         address sender;
         uint256 time;
@@ -24,22 +29,26 @@ contract EnglishAuction {
         string memory _name,
         string memory _symbol,
         uint256 _reservePrice
-    ) ERC721(_name, _symbol) {
+    ) {
         endingTime = block.timestamp;
         reservePrice = _reservePrice;
-        item = ERC721(_name, _symbol);
+        item = ERC721(_name, _symbol, 18);
     }
 
     function makeBid(uint256 amount) public payable {
         if (bids[msg.sender].length != 0) {} //user has a previous bid, lets refund it before they commit another bid
-        Bid storage bid = Bid(msg.sender, block.timestamp, msg.value);
+        Bid memory bid = Bid(msg.sender, block.timestamp, msg.value);
         bids[msg.sender].push(bid);
         if (msg.value > highestCurrentBidder.amountBid) {
             highestCurrentBidder = bid; //sus, check this out later
         }
     }
 
-    function retrieveBidsFrom(address bidder) public view returns (Bid[]) {
+    function retrieveBidsFrom(address bidder)
+        public
+        view
+        returns (Bid[] memory)
+    {
         return bids[bidder];
     }
 
