@@ -1,10 +1,21 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-import "solmate/tokens/ERC721.sol";
-import "solmate/auth/Owned.sol";
+interface IERC721 {
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) external;
 
-contract EnglishAuction is Owned {
+    function transferFrom(
+        address,
+        address,
+        uint256
+    ) external;
+}
+
+contract EnglishAuction {
     event Started();
     event BidSent(address indexed bidder, uint256 amount);
     event WithdrawnBid(address indexed bidder, uint256 amount);
