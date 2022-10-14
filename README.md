@@ -1,3 +1,3 @@
 # ERC721 English Auction
 
-Simple English auction implementation in Solidity. 
+Simple English auction implementation in Solidity using Foundry. 
